@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Library;
+package Simpus;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -32,8 +32,7 @@ import persisten.Buku;
 public class GUIBuku extends javax.swing.JFrame {
 
     private Timer refreshTimer;
-    private BigInteger jumlahHalaman;
-
+    
     public void peringatan(String pesan) {
         JOptionPane.showMessageDialog(rootPane, pesan);
     }
@@ -91,9 +90,10 @@ public class GUIBuku extends javax.swing.JFrame {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     tampil(conn);
+                    
                 }
             });
-            refreshTimer.start();
+           
         } catch (SQLException ex) {
             Logger.getLogger(GUIBuku.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -284,6 +284,7 @@ public class GUIBuku extends javax.swing.JFrame {
         getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1440, 810));
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButtonBackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonBackActionPerformed
@@ -322,13 +323,15 @@ public class GUIBuku extends javax.swing.JFrame {
         entityManager.getTransaction().commit();
         // akhir persistence
 
-        jTextIsbn.setText(isbn);
-        jTextJudul.setText(judul);
-        jTextSubjudul.setText(subjudul);
-        jTextPengarang.setText(pengarang);
-        jTextPenerbit.setText(penerbit);
-        jTextTahun.setText(tahun);
-        jTextHalaman.setText(jumlah);
+        jTextIsbn.setText("");
+        jTextJudul.setText("");
+        jTextSubjudul.setText("");
+        jTextPengarang.setText("");
+        jTextPenerbit.setText("");
+        jTextTahun.setText("");
+        jTextHalaman.setText("");
+        
+        refreshTimer.start();
 
         if (!isbn.isEmpty()) {
             // TODO add your handling code here:
@@ -378,6 +381,8 @@ public class GUIBuku extends javax.swing.JFrame {
         jTextTahun.setText(tahun);
         jTextHalaman.setText(jumlah);
 
+        refreshTimer.start();
+        
         if (!isbn.isEmpty()) {
             this.peringatan("Update data Berhasil");
         } else {
@@ -402,6 +407,7 @@ public class GUIBuku extends javax.swing.JFrame {
 
         jTextIsbn.setText("");
         kosongkan_form();
+        refreshTimer.start();
 
         if (!isbn.isEmpty()) {
             if (!isbn.isEmpty()) {
@@ -417,75 +423,90 @@ public class GUIBuku extends javax.swing.JFrame {
     private void jTextSearchKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jTextSearchKeyReleased
         // TODO add your handling code here:
         try {
-            String selection = (String) jComboIsbn.getSelectedItem();
+    String selection = (String) jComboIsbn.getSelectedItem();
+    String searchTerm = jTextSearch.getText().trim();
 
-            String searchTerm = jTextSearch.getText().trim();
+    // Check if a search criteria is selected
+    if (selection == null || selection.isEmpty()) {
+        throw new IllegalArgumentException("No search criteria selected.");
+    }
 
-            // Building the JPA query dynamically based on the selected criteria
-            String queryString = "SELECT b FROM Buku b WHERE ";
+    // Building the JPA query dynamically based on the selected criteria
+    String queryString = "SELECT b FROM Buku b WHERE ";
 
-            switch (selection) {
-                case "ISBN":
-                    queryString += "b.isbn LIKE :searchTerm ";
-                    break;
-                case "Judul":
-                    queryString += "b.judul LIKE :searchTerm";
-                    break;
-                case "Pengarang":
-                    queryString += "b.pengarang LIKE :searchTerm";
-                    break;
-                case "Tahun":
-                    queryString += "b.tahun LIKE :searchTerm";
-                    break;
-                default:
-                    throw new IllegalArgumentException("No search criteria selected.");
-            }
+    switch (selection.toLowerCase()) {
+        case "isbn":
+            queryString += "LOWER(b.isbn) LIKE LOWER(:searchTerm)";
+            break;
+        case "judul":
+            queryString += "LOWER(b.judul) LIKE LOWER(:searchTerm)";
+            break;
+        case "pengarang":
+            queryString += "LOWER(b.pengarang) LIKE LOWER(:searchTerm)";
+            break;
+        case "tahun":
+            queryString += "LOWER(b.tahun) LIKE LOWER(:searchTerm)";
+            break;
+        default:
+            throw new IllegalArgumentException("Invalid search criteria selected.");
+    }
 
-            // Create and execute the JPA query
-            EntityManagerFactory emf = Persistence.createEntityManagerFactory("UASPBOPU");
-            EntityManager em = emf.createEntityManager();
+    // Create and execute the JPA query
+    EntityManager em = null;
 
-            // Check if WHERE clause is not empty
-            if (queryString.endsWith(" WHERE ")) {
-                throw new IllegalArgumentException("No search criteria selected.");
-            }
+    try {
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("UASPBOPU");
+        em = emf.createEntityManager();
 
-            TypedQuery<Buku> query = em.createQuery(queryString, Buku.class);
-            query.setParameter("searchTerm", "%" + searchTerm + "%");
+        TypedQuery<Buku> query = em.createQuery(queryString, Buku.class);
+        query.setParameter("searchTerm", "%" + searchTerm + "%");
 
-            List<Buku> results = query.getResultList();
+        List<Buku> results = query.getResultList();
 
-            DefaultTableModel dataModel = new DefaultTableModel();
+        DefaultTableModel dataModel = new DefaultTableModel();
 
-            // Add columns to the model
-            dataModel.addColumn("ISBN");
-            dataModel.addColumn("Judul");
-            dataModel.addColumn("Subjudul");
-            dataModel.addColumn("Pengarang");
-            dataModel.addColumn("Penerbit");
-            dataModel.addColumn("TahunTerbit");
-            dataModel.addColumn("Jumlah Halaman");
-            // ... tambahkan kolom lain sesuai kebutuhan
+        // Add columns to the model
+        dataModel.addColumn("ISBN");
+        dataModel.addColumn("Judul");
+        dataModel.addColumn("Subjudul");
+        dataModel.addColumn("Pengarang");
+        dataModel.addColumn("Penerbit");
+        dataModel.addColumn("Tahun");
+        dataModel.addColumn("Jumlah Halaman");
+        // ... tambahkan kolom lain sesuai kebutuhan
 
-            // Add rows to the model
-            for (Buku result : results) {
-                Object[] rowData = {
+        // Add rows to the model
+        for (Buku result : results) {
+            Object[] rowData = {
                     result.getIsbn(),
                     result.getJudul(),
                     result.getSubjudul(),
                     result.getPengarang(),
                     result.getPenerbit(),
                     result.getTahun(),
-                    result.getJumlahHalaman(),};
-                dataModel.addRow(rowData);
-            }
+                    result.getJumlahHalaman(),
+            };
+            dataModel.addRow(rowData);
+        }
 
-            // Set jTable1 with the created model
-            jTableBuku.setModel(dataModel);
+        // Set jTableBuku with the created model
+        jTableBuku.setModel(dataModel);
 
-            System.out.println(results);
-        } catch (Exception ex) {
-            ex.printStackTrace();
+    } catch (IllegalArgumentException ex) {
+        // Handle the case where no search criteria selected
+        ex.printStackTrace();
+    } catch (Exception ex) {
+        // Handle other exceptions
+        ex.printStackTrace();
+    } finally {
+        if (em != null && em.isOpen()) {
+            em.close();
+        }
+    }
+} catch (Exception ex) {
+    ex.printStackTrace();
+}
+
     }//GEN-LAST:event_jTextSearchKeyReleased
 
     private void jTextJudulActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextJudulActionPerformed
