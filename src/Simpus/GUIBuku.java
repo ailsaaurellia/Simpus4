@@ -39,7 +39,7 @@ public class GUIBuku extends javax.swing.JFrame {
 
     ArrayList<Buku> dataBuku;
 
-    private void tampil(Connection conn) {
+    private void tampil() {
         dataBuku.clear();
         EntityManager entityManager = Persistence.createEntityManagerFactory("UASPBOPU").createEntityManager();
         entityManager.getTransaction().begin();
@@ -83,16 +83,8 @@ public class GUIBuku extends javax.swing.JFrame {
             dataBuku = new ArrayList<>();
             initComponents();
             Connection conn = DriverManager.getConnection("jdbc:postgresql://localhost:5432/Simpus", "postgres", "Chanhee98");
-            tampil(conn);
+            tampil();
             kosongkan_form();
-
-            refreshTimer = new Timer(5000, new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    tampil(conn);
-                    
-                }
-            });
            
         } catch (SQLException ex) {
             Logger.getLogger(GUIBuku.class.getName()).log(Level.SEVERE, null, ex);
@@ -123,6 +115,7 @@ public class GUIBuku extends javax.swing.JFrame {
         jTextPenerbit = new javax.swing.JTextField();
         jTextHalaman = new javax.swing.JTextField();
         jTextTahun = new javax.swing.JTextField();
+        jButton1 = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -185,7 +178,7 @@ public class GUIBuku extends javax.swing.JFrame {
                 jButtonDeleteActionPerformed(evt);
             }
         });
-        getContentPane().add(jButtonDelete, new org.netbeans.lib.awtextra.AbsoluteConstraints(1200, 700, 120, 40));
+        getContentPane().add(jButtonDelete, new org.netbeans.lib.awtextra.AbsoluteConstraints(910, 700, 120, 40));
 
         jButtonUpdate.setBackground(new java.awt.Color(255, 102, 51));
         jButtonUpdate.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
@@ -279,6 +272,14 @@ public class GUIBuku extends javax.swing.JFrame {
         jTextTahun.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
         getContentPane().add(jTextTahun, new org.netbeans.lib.awtextra.AbsoluteConstraints(900, 332, 200, 30));
 
+        jButton1.setText("CETAK");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+        getContentPane().add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(1140, 700, 90, 40));
+
         jLabel1.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
         jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Gambaran/Buku (2).png"))); // NOI18N
         getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1440, 810));
@@ -331,7 +332,9 @@ public class GUIBuku extends javax.swing.JFrame {
         jTextTahun.setText("");
         jTextHalaman.setText("");
         
-        refreshTimer.start();
+        DefaultTableModel model = (DefaultTableModel) jTableBuku.getModel();
+        model.setRowCount(0);
+        tampil();
 
         if (!isbn.isEmpty()) {
             // TODO add your handling code here:
@@ -381,7 +384,9 @@ public class GUIBuku extends javax.swing.JFrame {
         jTextTahun.setText(tahun);
         jTextHalaman.setText(jumlah);
 
-        refreshTimer.start();
+        DefaultTableModel model = (DefaultTableModel) jTableBuku.getModel();
+        model.setRowCount(0);
+        tampil();
         
         if (!isbn.isEmpty()) {
             this.peringatan("Update data Berhasil");
@@ -407,7 +412,9 @@ public class GUIBuku extends javax.swing.JFrame {
 
         jTextIsbn.setText("");
         kosongkan_form();
-        refreshTimer.start();
+         DefaultTableModel model = (DefaultTableModel) jTableBuku.getModel();
+        model.setRowCount(0);
+        tampil();
 
         if (!isbn.isEmpty()) {
             if (!isbn.isEmpty()) {
@@ -564,6 +571,11 @@ public class GUIBuku extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jTextIsbnActionPerformed
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        
+    }//GEN-LAST:event_jButton1ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -600,6 +612,7 @@ public class GUIBuku extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton jButton1;
     private javax.swing.JButton jButtonBack;
     private javax.swing.JButton jButtonDelete;
     private javax.swing.JButton jButtonTambah;
