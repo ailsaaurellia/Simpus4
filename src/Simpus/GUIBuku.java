@@ -18,10 +18,21 @@ import java.util.logging.Logger;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import javax.swing.JOptionPane;
 import javax.swing.Timer;
 import javax.swing.table.DefaultTableModel;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.view.JasperViewer;
 import static org.eclipse.persistence.expressions.ExpressionOperator.trim;
 import persisten.Buku;
 
@@ -573,6 +584,85 @@ public class GUIBuku extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
+        try {
+            String reportPath = "src/Simpus/Bukuku.jrxml";
+            String selection = ((String) jComboIsbn.getSelectedItem()).toLowerCase();
+            String searchTerm = jTextSearch.getText().trim();
+
+            // Building the JPA query dynamically based on the selected criteria
+            String queryString = "SELECT b FROM Buku b WHERE ";
+
+
+            switch (selection.toLowerCase()) {
+                case "isbn":
+                    queryString += "LOWER(b.isbn) LIKE LOWER(:searchTerm)";
+                    break;
+                case "judul":
+                    queryString += "LOWER(b.judul) LIKE LOWER(:searchTerm)";
+                    break;
+                case "pengarang":
+                    queryString += "LOWER(b.pengarang) LIKE LOWER(:searchTerm)";
+                    break;
+                case "tahun":
+                    queryString += "LOWER(b.tahun) LIKE LOWER(:searchTerm)";
+                    break;
+                default:
+                    throw new IllegalArgumentException("Invalid search criteria selected.");
+            }
+
+
+            EntityManagerFactory emf = Persistence.createEntityManagerFactory("UASPBOPU");
+            EntityManager em = emf.createEntityManager();
+            em.getTransaction().begin();
+            
+            CriteriaBuilder cb = em.getCriteriaBuilder();
+            CriteriaQuery<Buku> cq = cb.createQuery(Buku.class);
+            Root<Buku> bok = cq.from(Buku.class);
+            cq.select(bok);
+
+            // Check if WHERE clause is not empty
+            if (queryString.endsWith(" WHERE ")) {
+                throw new IllegalArgumentException("No search criteria selected.");
+            }
+
+            TypedQuery<Buku> q = em.createQuery(cq);
+            List<Buku> list = q.getResultList();
+            Query query = em.createQuery(queryString);
+            query.setParameter("searchTerm", "%" + searchTerm + "%");
+
+            List<Buku> results = query.getResultList();
+            
+            // Menyiapkan data untuk laporan
+            List<Object[]> data = new ArrayList<>();
+            for (Buku result : results) {
+            Object[] rowData = {
+                    result.getIsbn(),
+                    result.getJudul(),
+                    result.getSubjudul(),
+                    result.getPengarang(),
+                    result.getPenerbit(),
+                    result.getTahun(),
+                    result.getJumlahHalaman(),
+            };
+                    data.add(rowData);
+                }
+            em.getTransaction().commit();
+           em.close();
+            emf.close();
+
+            // Membuat sumber data untuk JasperReports dari data hasil pencarian
+   
+            JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(results);
+            
+            // Memuat file desain laporan (*.jrxml)
+            JasperReport jasperReport = JasperCompileManager.compileReport(reportPath);
+                JasperPrint print = JasperFillManager.fillReport(jasperReport, null, dataSource);
+                JasperViewer viewer = new JasperViewer(print, false);
+                viewer.setVisible(true);
+
+        } catch (JRException ex) {
+                Logger.getLogger(GUIBuku.class.getName()).log(Level.SEVERE, null, ex);
+            }
         
     }//GEN-LAST:event_jButton1ActionPerformed
 
