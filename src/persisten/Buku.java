@@ -6,7 +6,6 @@
 package persisten;
 
 import java.io.Serializable;
-import java.math.BigInteger;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -31,7 +30,7 @@ import javax.xml.bind.annotation.XmlRootElement;
     , @NamedQuery(name = "Buku.findByPengarang", query = "SELECT b FROM Buku b WHERE b.pengarang = :pengarang")
     , @NamedQuery(name = "Buku.findByPenerbit", query = "SELECT b FROM Buku b WHERE b.penerbit = :penerbit")
     , @NamedQuery(name = "Buku.findByTahun", query = "SELECT b FROM Buku b WHERE b.tahun = :tahun")
-    , @NamedQuery(name = "Buku.findByJumlahHalaman", query = "SELECT b FROM Buku b WHERE b.jumlahHalaman = :jumlahHalaman")})
+    , @NamedQuery(name = "Buku.findByHalaman", query = "SELECT b FROM Buku b WHERE b.halaman = :halaman")})
 public class Buku implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -49,8 +48,8 @@ public class Buku implements Serializable {
     private String penerbit;
     @Column(name = "tahun")
     private String tahun;
-    @Column(name = "jumlah_halaman")
-    private String jumlahHalaman;
+    @Column(name = "halaman")
+    private String halaman;
 
     public Buku() {
     }
@@ -107,12 +106,12 @@ public class Buku implements Serializable {
         this.tahun = tahun;
     }
 
-    public String getJumlahHalaman() {
-        return jumlahHalaman;
+    public String getHalaman() {
+        return halaman;
     }
 
-    public void setJumlahHalaman(String jumlahHalaman) {
-        this.jumlahHalaman = jumlahHalaman;
+    public void setHalaman(String halaman) {
+        this.halaman = halaman;
     }
 
     @Override
@@ -138,10 +137,6 @@ public class Buku implements Serializable {
     @Override
     public String toString() {
         return "persisten.Buku[ isbn=" + isbn + " ]";
-    }
-
-    public void setJumlahHalaman(BigInteger jumlahHalaman) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
 }

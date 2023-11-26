@@ -44,27 +44,25 @@ public class GUIMenu extends javax.swing.JFrame {
                 jButtonLogoutActionPerformed(evt);
             }
         });
-        getContentPane().add(jButtonLogout, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 510, 80, 30));
+        getContentPane().add(jButtonLogout, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 510, 80, 30));
 
         jLabelBuku.setFont(new java.awt.Font("Tahoma", 1, 28)); // NOI18N
-        jLabelBuku.setText("  BUKU");
         jLabelBuku.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jLabelBukuMouseClicked(evt);
             }
         });
-        getContentPane().add(jLabelBuku, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 340, 200, 100));
+        getContentPane().add(jLabelBuku, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 370, 200, 100));
 
         jLabelSkripsi.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
-        jLabelSkripsi.setText(" SKRIPSI");
         jLabelSkripsi.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 jLabelSkripsiMouseClicked(evt);
             }
         });
-        getContentPane().add(jLabelSkripsi, new org.netbeans.lib.awtextra.AbsoluteConstraints(450, 340, 190, 100));
+        getContentPane().add(jLabelSkripsi, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 370, 190, 100));
 
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Gambaran/Homepage (1).png"))); // NOI18N
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Gambaran/Homepage.jpg"))); // NOI18N
         getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 770, -1));
 
         pack();

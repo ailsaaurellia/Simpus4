@@ -14,7 +14,8 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
 import javax.swing.JOptionPane;
-import persisten.Anggota;
+import persisten.Login;
+
 
 
 /*
@@ -30,10 +31,10 @@ public class GUILogin extends javax.swing.JFrame {
 
     private void kosongkan_form() {
 
-        jTextEmail.setText("");
+        jTextUser.setText("");
         jPass.setText("");
     }
-    ArrayList<Anggota> gota;
+    ArrayList<Login> login;
 
     /**
      * Creates new form GUILogin
@@ -53,28 +54,27 @@ public class GUILogin extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jTextEmail = new javax.swing.JTextField();
+        jTextUser = new javax.swing.JTextField();
         jPass = new javax.swing.JPasswordField();
         jButtonLogin = new javax.swing.JButton();
         jButtonCancel = new javax.swing.JButton();
-        jLabel1 = new javax.swing.JLabel();
+        view = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jTextEmail.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
-        jTextEmail.setBorder(null);
-        jTextEmail.addActionListener(new java.awt.event.ActionListener() {
+        jTextUser.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
+        jTextUser.setBorder(null);
+        jTextUser.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextEmailActionPerformed(evt);
+                jTextUserActionPerformed(evt);
             }
         });
-        getContentPane().add(jTextEmail, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 280, 150, 20));
+        getContentPane().add(jTextUser, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 270, 160, 30));
 
         jPass.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
-        jPass.setForeground(new java.awt.Color(255, 153, 153));
         jPass.setBorder(null);
-        getContentPane().add(jPass, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 350, 150, 20));
+        getContentPane().add(jPass, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 348, 160, -1));
 
         jButtonLogin.setBackground(new java.awt.Color(255, 99, 99));
         jButtonLogin.setFont(new java.awt.Font("Tahoma", 1, 18)); // NOI18N
@@ -91,28 +91,28 @@ public class GUILogin extends javax.swing.JFrame {
         jButtonCancel.setBackground(new java.awt.Color(204, 153, 0));
         jButtonCancel.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
         jButtonCancel.setForeground(new java.awt.Color(255, 255, 255));
-        jButtonCancel.setText("Cancel");
+        jButtonCancel.setText("X");
         jButtonCancel.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonCancelActionPerformed(evt);
             }
         });
-        getContentPane().add(jButtonCancel, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 490, 80, 30));
+        getContentPane().add(jButtonCancel, new org.netbeans.lib.awtextra.AbsoluteConstraints(690, 20, 50, 30));
 
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Gambaran/Login1.png"))); // NOI18N
-        getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 770, 580));
+        view.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Gambaran/Login.png"))); // NOI18N
+        getContentPane().add(view, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 760, 580));
 
         pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jTextEmailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextEmailActionPerformed
+    private void jTextUserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextUserActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextEmailActionPerformed
+    }//GEN-LAST:event_jTextUserActionPerformed
 
     private void jButtonLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonLoginActionPerformed
-        // TODO add your handling code here:
-        String email = jTextEmail.getText();
+
+        String username = jTextUser.getText();
         String password = new String(jPass.getPassword());
 
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("UASPBOPU");
@@ -122,8 +122,8 @@ public class GUILogin extends javax.swing.JFrame {
             em.getTransaction().begin();
 
             // Assuming you have a User entity with attributes 'username' and 'password'
-            Query query = em.createQuery("SELECT a FROM Anggota a WHERE a.email = :email AND a.password = :password");
-            query.setParameter("email", email);
+            Query query = em.createQuery("SELECT l FROM Login l WHERE l.username = :username AND l.password = :password");
+            query.setParameter("username", username);
             query.setParameter("password", password);
 
             if (!query.getResultList().isEmpty()) {
@@ -143,7 +143,7 @@ public class GUILogin extends javax.swing.JFrame {
         } finally {
             em.close();
             emf.close();
-        }
+        }//
     }//GEN-LAST:event_jButtonLoginActionPerformed
 
     private void jButtonCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonCancelActionPerformed
@@ -189,9 +189,9 @@ public class GUILogin extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonCancel;
     private javax.swing.JButton jButtonLogin;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JPasswordField jPass;
-    private javax.swing.JTextField jTextEmail;
+    private javax.swing.JTextField jTextUser;
+    private javax.swing.JLabel view;
     // End of variables declaration//GEN-END:variables
 
 }
